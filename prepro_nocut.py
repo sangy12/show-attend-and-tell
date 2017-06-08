@@ -44,7 +44,7 @@ def _build_vocab(annotations, threshold=1):
             # debug
             if (max_length <  len(caption)):
                 max_length = len(caption)
-                print("%d: %s" %(max_length, " ".join(caption)))
+                print("%d: %s" %(max_length, " ".join(caption).encode('utf8')))
             for w in caption:
                 counter[w] +=1
     print('*********\n')
@@ -129,7 +129,7 @@ if __name__ == "__main__":
     rand_idx = random.sample(xrange(len(train_captions)),10)
     rand_cap = [train_captions[idx][0] for idx in rand_idx]
     for k in range(10):
-        print ' '.join(rand_cap[k])
+        print ' '.join(rand_cap[k]).encode('utf8')
     print('******\n')
 
 
@@ -139,7 +139,7 @@ if __name__ == "__main__":
     #debug
     print('\n*** debug: print vocabulary')
     for word,vec in word_to_idx.iteritems():
-        print("%d: %s" %(vec, word))
+        print("%d: %s" %(vec, word.encode('utf8')))
     print('******\n')
 
 
@@ -157,7 +157,7 @@ if __name__ == "__main__":
     for k in range(10):
         print rand_vec[k]
         for v in rand_vec[k]:
-            print vec_to_word[v],
+            print vec_to_word[v].encode('utf8'),
         print ('\n')
     print('******\n')
 

@@ -187,16 +187,19 @@ class CaptioningSolver(object):
         features = data['features']
 
         # build a graph to sample captions
-        alphas, betas, sampled_captions = self.model.build_sampler(max_len=20)    # (N, max_len, L), (N, max_len)
+        _, _, generated_captions = self.model.build_sampler(max_len=20)
+        # alphas, betas, sampled_captions = self.model.build_sampler(max_len=20)    # (N, max_len, L), (N, max_len)
 
         config = tf.ConfigProto(allow_soft_placement=True)
         config.gpu_options.allow_growth = True
         with tf.Session(config=config) as sess:
             saver = tf.train.Saver()
             saver.restore(sess, self.test_model)
+
             features_batch, image_files = sample_coco_minibatch(data, self.batch_size)
             feed_dict = { self.model.features: features_batch }
             alps, bts, sam_cap = sess.run([alphas, betas, sampled_captions], feed_dict)  # (N, max_len, L), (N, max_len)
+
             decoded = decode_captions(sam_cap, self.model.idx_to_word)
 
             if attention_visualization:
@@ -232,3 +235,37 @@ class CaptioningSolver(object):
                     all_sam_cap[i*self.batch_size:(i+1)*self.batch_size] = sess.run(sampled_captions, feed_dict)
                 all_decoded = decode_captions(all_sam_cap, self.model.idx_to_word)
                 save_pickle(all_decoded, "./new_data/%s/%s.candidate.captions.pkl" %(split,split))
+
+    def test_all(self, data, split='test', save_sampled_captions=True):
+        '''
+        Args:
+            - data: dictionary with the following keys:
+            - features: Feature vectors of shape (5000, 196, 512)
+            - file_names: Image file names of shape (5000, )
+            - captions: Captions of shape (24210, 17)
+            - image_idxs: Indices for mapping caption to image of shape (24210, )
+            - features_to_captions: Mapping feature to captions (5000, 4~5)
+            - split: 'train', 'val' or 'test'
+            - save_sampled_captions: If True, save sampled captions to pkl file for computing BLEU scores.
+        '''
+
+        features = data['features']
+
+        # build a graph to sample captions
+        _, _, sampled_captions = self.model.build_sampler(max_len=20)    # (N, max_len, L), (N, max_len)
+
+        config = tf.ConfigProto(allow_soft_placement=True)
+        config.gpu_options.allow_growth = True
+        with tf.Session(config=config) as sess:
+            saver = tf.train.Saver()
+            saver.restore(sess, self.test_model)
+
+            if save_sampled_captions:
+                all_sam_cap = np.ndarray((features.shape[0], 20))
+                num_iter = int(np.ceil(float(features.shape[0]) / self.batch_size))
+                for i in range(num_iter):
+                    features_batch = features[i*self.batch_size:(i+1)*self.batch_size]
+                    feed_dict = { self.model.features: features_batch }
+                    all_sam_cap[i*self.batch_size:(i+1)*self.batch_size] = sess.run(sampled_captions, feed_dict)
+                all_decoded = decode_captions(all_sam_cap, self.model.idx_to_word)
+                save_pickle(all_decoded, "./new_data/%s/%s_%s.candidate.captions.pkl" %(split,split,self.model_name))
