@@ -4,7 +4,7 @@ def gen_caption(ifname, ofname):
     f = load_pickle(ifname)
     with open(ofname, 'w') as of:
         for i,caption in enumerate(f):
-            line = str(i) + ' ' + caption + '\n'
+            line = str(9000+i) + ' ' + caption + '\n'
             line = line.encode('utf8')
             of.write(line)
 
