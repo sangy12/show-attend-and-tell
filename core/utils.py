@@ -5,7 +5,7 @@ import time
 import os
 
 
-def load_data(data_path='./new_data', split = 'train'):
+def load_data(data_path='./new_data', split = 'train', cap_length = 27):
     data_path = os.path.join(data_path, split)
 
     start_t = time.time()
@@ -31,11 +31,12 @@ def load_data(data_path='./new_data', split = 'train'):
         count += 1
 
         for words in cap_per_img:
-            if len(words)!=17:
+            if len(words)!=cap_length:
                 print('\n*** debug ***')
                 print(words)
                 print('Error')
                 print('********\n')
+                os.exist(0)
 
     data['captions'] = np.asarray(captions).astype(np.int32)
     data['image_idxs'] = np.asarray(img_idx)

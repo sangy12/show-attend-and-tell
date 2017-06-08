@@ -11,14 +11,14 @@ def main():
     # load val dataset to print out bleu scores every epoch
     # val_data = load_data(data_path='./new_data', split = 'val')
 
-    model = CaptionGenerator(word_to_idx, dim_feature=[7*7, 512], dim_embed=512/2,
-                                       dim_hidden=1024/2, n_time_step=16, prev2out=True,
+    model = CaptionGenerator(word_to_idx, dim_feature=[7*7, 512], dim_embed=512,
+                                       dim_hidden=1024, n_time_step=26, prev2out=True,
                                                  ctx2out=True, alpha_c=1.0, selector=True, dropout=True)
 
-    solver = CaptioningSolver(model, data, val_data, n_epochs=50, batch_size=128/2, update_rule='adam',
+    solver = CaptioningSolver(model, data, val_data, n_epochs=40, batch_size=128/2, update_rule='adam',
                                           learning_rate=0.001, print_every=300, save_every=1, image_path='./image/',
-                                    pretrained_model=None, model_path='model/small/', test_model='model/small/model-10',
-                                     print_bleu=True, log_path='log/small/', model_name='small')
+                                    pretrained_model=None, model_path='model/nocut/', test_model='model/nocut/model-10',
+                                     print_bleu=True, log_path='log/nocut/', model_name='nocut')
 
     solver.train()
 

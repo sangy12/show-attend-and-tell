@@ -173,7 +173,7 @@ class CaptionGenerator(object):
         if self.alpha_c > 0:
             alphas = tf.transpose(tf.pack(alpha_list), (1, 0, 2))     # (N, T, L)
             alphas_all = tf.reduce_sum(alphas, 1)      # (N, L)
-            alpha_reg = self.alpha_c * tf.reduce_sum((16./49 - alphas_all) ** 2)
+            alpha_reg = self.alpha_c * tf.reduce_sum((self.T/self.L - alphas_all) ** 2)
             loss += alpha_reg
 
         return loss / tf.to_float(batch_size)

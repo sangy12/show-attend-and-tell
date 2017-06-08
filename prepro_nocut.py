@@ -14,6 +14,7 @@ def _process_caption_data(caption_file, set_type):
     cap_per_image = []
     with open(caption_file, 'r') as infile:
         for line in infile:
+            line = line.decode('utf8')
             if not count:
                 count += 1
                 continue
@@ -23,8 +24,7 @@ def _process_caption_data(caption_file, set_type):
                 count += 1
                 continue
             count += 1
-            line = line.decode('utf8')
-            cap = line.lower().strip().replace('/', ' ').split()
+            cap = list(line.lower().strip())
             cap_per_image.append(cap)
         captions.append(cap_per_image)
 
@@ -121,8 +121,8 @@ if __name__ == "__main__":
     ### Preprocessing step 1: use the jieba chinese word cut tool to cut the captions
 
     ### Preprocessing step 2: collect the word-cut to vacabulary
-    train_captions = _process_caption_data(caption_file='new_data/train_cut.txt', set_type='train')
-    val_captions = _process_caption_data(caption_file='new_data/valid_cut.txt', set_type='val')
+    train_captions = _process_caption_data(caption_file='new_data/train.txt', set_type='train')
+    val_captions = _process_caption_data(caption_file='new_data/valid.txt', set_type='val')
 
     #debug
     print('\n*** debug: random choose some captions')
@@ -144,7 +144,7 @@ if __name__ == "__main__":
 
 
     # max length of word-cut in a sentence
-    max_length = 15
+    max_length = 25
     ### Preprocessing step 4: convert the captions to vectors
     captions = _build_caption_vector(annotations=train_captions, word_to_idx=word_to_idx, max_length=max_length)
     save_pickle(captions, './new_data/train/train_captions_vec.pkl')
@@ -169,6 +169,6 @@ if __name__ == "__main__":
 
 
     print('\n***debug: check some word')
-    word = u"t恤"
+    word = u"t"
     print word, word_to_idx[word]
 
