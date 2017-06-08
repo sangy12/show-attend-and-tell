@@ -10,6 +10,6 @@ def gen_caption(ifname, ofname):
 
 
 if __name__ == '__main__':
-    ofname = './new_data/val/model_small_nocut.captions.txt'
-    ifname = './new_data/val/val_snocut.candidate.captions.pkl'
+    ofname = './new_data/test/model_small.captions.txt'
+    ifname = './new_data/test/test_small.candidate.captions.pkl'
     gen_caption(ifname, ofname)
