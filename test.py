@@ -4,7 +4,7 @@ from core.utils import load_test_data
 
 
 def main():
-    cap_len = 27
+    cap_len = 17
     # load train dataset
     test_data= load_test_data(data_path='./new_data', cap_length=cap_len)
     word_to_idx = data['word_to_idx']
@@ -19,8 +19,8 @@ def main():
     solver = CaptioningSolver(model, None, None, n_epochs=60, batch_size=128/2, update_rule='adam',
                                           learning_rate=0.001, print_every=300, save_every=1, image_path='./image/',
                                     pretrained_model=None, print_bleu=True,
-                              model_path='model/snocut/', test_model='model/snocut/model-10',
-                                      log_path='log/snocut/', model_name='snocut')
+                              model_path='model/small/', test_model='model/small/model-11',
+                                      log_path='log/small/', model_name='small')
 
     solver.test_all(test_data)
 

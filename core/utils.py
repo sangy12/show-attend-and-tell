@@ -5,7 +5,7 @@ import time
 import os
 
 
-def load_data(data_path='./new_data', split = 'train'):
+def load_data(data_path='./new_data', split = 'train', cap_length = 27):
     data_path = os.path.join(data_path, split)
 
     start_t = time.time()
@@ -31,11 +31,12 @@ def load_data(data_path='./new_data', split = 'train'):
         count += 1
 
         for words in cap_per_img:
-            if len(words)!=17:
+            if len(words)!=cap_length:
                 print('\n*** debug ***')
                 print(words)
                 print('Error')
                 print('********\n')
+                os.exist(0)
 
     data['captions'] = np.asarray(captions).astype(np.int32)
     data['image_idxs'] = np.asarray(img_idx)
@@ -52,6 +53,28 @@ def load_data(data_path='./new_data', split = 'train'):
     end_t = time.time()
     print "Elapse time: %.2f" %(end_t - start_t)
     return data, val_data
+
+def load_test_data(data_path='./new_data', cap_length = 27):
+    data_path = os.path.join(data_path, 'train')
+
+    start_t = time.time()
+    test_data = {}
+
+    f = h5py.File(os.path.join('./new_data/train/', 'image_vgg19_block5_pool_feature.h5'))
+
+    test_data['features'] = np.asarray(f['test_set']).reshape(-1,49,512)
+
+    with open(os.path.join(data_path, 'word_to_idx.pkl'), 'rb') as f:
+        test_data['word_to_idx'] = pickle.load(f)
+
+    for k, v in test_data.iteritems():
+        if type(v) == np.ndarray:
+            print k, type(v), v.shape, v.dtype
+        else:
+            print k, type(v), len(v)
+    end_t = time.time()
+    print "Elapse time: %.2f" %(end_t - start_t)
+    return test_data
 
 def decode_captions(captions, idx_to_word):
     if captions.ndim == 1:
