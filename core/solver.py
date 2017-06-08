@@ -4,7 +4,7 @@ import skimage.transform
 import numpy as np
 import time
 import os
-import cPickle as pickle
+# import cPickle as pickle
 from scipy import ndimage
 from utils import *
 from bleu import evaluate
@@ -48,6 +48,7 @@ class CaptioningSolver(object):
         self.model_path = kwargs.pop('model_path', './model/')
         self.pretrained_model = kwargs.pop('pretrained_model', None)
         self.test_model = kwargs.pop('test_model', './model/lstm/model-1')
+        self.model_name = kwargs.pop('model_name', 'small')
 
         # set an optimizer by update rule
         if self.update_rule == 'adam':
@@ -138,10 +139,10 @@ class CaptioningSolver(object):
                         ground_truths = captions[image_idxs == image_idxs_batch[0]]
                         decoded = decode_captions(ground_truths, self.model.idx_to_word)
                         for j, gt in enumerate(decoded):
-                            print "Ground truth %d: %s" %(j+1, gt)
+                            print "Ground truth %d: %s" %(j+1, gt.encode('utf8'))
                         gen_caps = sess.run(generated_captions, feed_dict)
                         decoded = decode_captions(gen_caps, self.model.idx_to_word)
-                        print "Generated caption: %s\n" %decoded[0]
+                        print "Generated caption: %s\n" %decoded[0].encode('utf8')
 
                 print "Previous epoch loss: ", prev_loss
                 print "Current epoch loss: ", curr_loss
@@ -159,8 +160,8 @@ class CaptioningSolver(object):
                         all_gen_cap[i*self.batch_size:(i+1)*self.batch_size] = gen_cap
 
                     all_decoded = decode_captions(all_gen_cap, self.model.idx_to_word)
-                    save_pickle(all_decoded, "./new_data/val/val.candidate.captions.pkl")
-                    scores = evaluate(data_path='./new_data', split='val', get_scores=True)
+                    save_pickle(all_decoded, "./new_data/val/val_%s.candidate.captions.pkl" % self.model_name)
+                    scores = evaluate(data_path='./new_data', split='val', model=self.model_name, get_scores=True)
                     write_bleu(scores=scores, path=self.model_path, epoch=e)
 
                 # save model's parameters
