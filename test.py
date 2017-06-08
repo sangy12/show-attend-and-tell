@@ -7,7 +7,7 @@ def main():
     cap_len = 27
     # load train dataset
     test_data= load_test_data(data_path='./new_data', cap_length=cap_len)
-    word_to_idx = data['word_to_idx']
+    word_to_idx = test_data['word_to_idx']
 
     # load val dataset to print out bleu scores every epoch
     # val_data = load_data(data_path='./new_data', split = 'val')
