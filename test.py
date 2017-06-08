@@ -1,7 +1,8 @@
 from core.solver import CaptioningSolver
 from core.model import CaptionGenerator
 from core.utils import load_test_data
-from gen_captions_from_pickle import gen_caption
+from gen_caption_from_pickle import gen_caption
+import tensorflow as tf
 
 
 if __name__ == "__main__":
@@ -16,6 +17,8 @@ if __name__ == "__main__":
 
     for model_idx in range(1,21):
         model_name = 'snocut'+str(model_idx)
+        print '****** testing %s' % model_name
+        tf.reset_default_graph()
         model = CaptionGenerator(word_to_idx, dim_feature=[7*7, 512], dim_embed=512/2,
                                        dim_hidden=1024/2, n_time_step=cap_len-1, prev2out=True,
                                                  ctx2out=True, alpha_c=1.0, selector=True, dropout=True)
@@ -27,7 +30,7 @@ if __name__ == "__main__":
                                       log_path='log/snocut/', model_name=model_name)
 
         solver.test_all(test_data)
-        infile = './new_data/test/test_%s.captions.pickle' % model_name
+        infile = './new_data/test/test_%s.candidate.captions.pkl' % model_name
         ofile = './new_data/test/captions_%s.txt' % model_name
         gen_caption(ifname=infile, ofname=ofile)
 
