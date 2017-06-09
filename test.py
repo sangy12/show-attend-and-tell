@@ -15,7 +15,7 @@ if __name__ == "__main__":
     # val_data = load_data(data_path='./new_data', split = 'val')
 
 
-    for model_idx in range(1,21):
+    for model_idx in range(1,31):
         model_name = 'small'+str(model_idx)
         print '****** testing %s' % model_name
         tf.reset_default_graph()
